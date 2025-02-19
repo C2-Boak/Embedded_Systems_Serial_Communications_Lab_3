@@ -49,7 +49,7 @@ int main()
     inputsInit();
     outputsInit();
 
-    alarmstateTicker.attach(&AlarmstateTrans, 10.0);
+    alarmstateTicker.attach(&AlarmstateTrans, (6s));
 
     while (true) {
         alarmActivationUpdate();
@@ -64,7 +64,7 @@ void AlarmstateTrans()
     if (alarmState) {
         uartUsb.write("\n The alarm is activated!\r\n", 28);
     } else {
-        uartUsb.write("\n The alarm is not activated!\r\n", 33);
+        uartUsb.write("\n The alarm is not activated!\r\n", 32);
     }
 
 
@@ -77,6 +77,12 @@ void AlarmstateTrans()
     uartUsb.write(" °C\r\n", 5);
 
 
+    if (TEMP > 42.0) {
+        uartUsb.write("Warning: Temperature exceeds 42°C!\r\n", 36);
+    } else if (TEMP < 5.0) {
+        uartUsb.write("Warning: Temperature is below 5°C!\r\n", 36);
+    }
+
 
     int gasInt = (int)Gas_LEVELS;
     int gasFrac = (int)((Gas_LEVELS - gasInt) * 100);
@@ -85,7 +91,12 @@ void AlarmstateTrans()
     uartUsb.write("\n Gas level: ", 13);
     uartUsb.write(gasString, gasLength);
     uartUsb.write(" ml\r\n", 5);
+
+    if (Gas_LEVELS > 5.0) {
+        uartUsb.write("Warning: Gas level exceeds 5 ml!\r\n", 33);
+    }
 }
+
 void inputsInit()
 {
     gasDetector.mode(PullDown);
