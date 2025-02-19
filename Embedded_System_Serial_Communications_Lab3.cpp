@@ -1,4 +1,4 @@
-//=====[Libraries]=============================================================
+
 
 #include "mbed.h"
 #include "arm_book_lib.h"
@@ -20,7 +20,6 @@ DigitalOut systemBlockedLed(LED2);
 UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 
-
 Ticker alarmstateTicker;
 
 bool alarmState = OFF;
@@ -40,6 +39,9 @@ void uartTask();
 void availableCommands();
 void AlarmstateTrans();
 
+float Gas_LEVELS = 0.673;
+float TEMP = 23.00;
+
 
 
 int main()
@@ -57,7 +59,6 @@ int main()
 }
 
 
-
 void AlarmstateTrans()
 {
     if (alarmState) {
@@ -65,8 +66,26 @@ void AlarmstateTrans()
     } else {
         uartUsb.write("\n The alarm is not activated!\r\n", 33);
     }
-}
 
+
+    int tempInt = (int)TEMP;
+    int tempFrac = (int)((TEMP - tempInt) * 100);
+    char tempString[20];
+    int tempLength = sprintf(tempString, "%d.%02d", tempInt, tempFrac);
+    uartUsb.write("\n Temperature: ", 15);
+    uartUsb.write(tempString, tempLength);
+    uartUsb.write(" °C\r\n", 5);
+
+
+
+    int gasInt = (int)Gas_LEVELS;
+    int gasFrac = (int)((Gas_LEVELS - gasInt) * 100);
+    char gasString[20];
+    int gasLength = sprintf(gasString, "%d.%02d", gasInt, gasFrac);
+    uartUsb.write("\n Gas level: ", 13);
+    uartUsb.write(gasString, gasLength);
+    uartUsb.write(" ml\r\n", 5);
+}
 void inputsInit()
 {
     gasDetector.mode(PullDown);
