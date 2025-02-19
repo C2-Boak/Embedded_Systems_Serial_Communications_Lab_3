@@ -21,6 +21,8 @@ UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
 //=====[Declaration and initialization of public global variables]=============
 
+Ticker alarmstateTicker;
+
 bool alarmState = OFF;
 bool gasAlarm = OFF;
 bool tempAlarm = OFF;
@@ -36,6 +38,7 @@ void alarmDeactivationUpdate();
 
 void uartTask();
 void availableCommands();
+void AlarmstateTrans();  // Declaration of AlarmstateTrans function
 
 //=====[Main function, the program entry point after power on or reset]========
 
@@ -43,6 +46,9 @@ int main()
 {
     inputsInit();
     outputsInit();
+
+    alarmstateTicker.attach(&AlarmstateTrans, 10.0);
+
     while (true) {
         alarmActivationUpdate();
         alarmDeactivationUpdate();
@@ -51,6 +57,15 @@ int main()
 }
 
 //=====[Implementations of public functions]===================================
+
+void AlarmstateTrans()
+{
+    if (alarmState) {
+        uartUsb.write("\n The alarm is activated!\r\n", 28);
+    } else {
+        uartUsb.write("\n The alarm is not activated!\r\n", 33);
+    }
+}
 
 void inputsInit()
 {
@@ -71,29 +86,27 @@ void outputsInit()
 
 void alarmActivationUpdate()
 {
-    if ( gasDetector || overTempDetector ) {
+    if (gasDetector || overTempDetector) {
         alarmState = ON;
     }
     alarmLed = alarmState;
 
-    if (gasDetector){
+    if (gasDetector) {
         gasAlarm = ON;
     }
-    if (overTempDetector){
+    if (overTempDetector) {
         tempAlarm = ON;
     }
-
-
 }
 
 void alarmDeactivationUpdate()
 {
-    if ( numberOfIncorrectCodes < 5 ) {
-        if ( aButton && bButton && cButton && dButton && !enterButton ) {
+    if (numberOfIncorrectCodes < 5) {
+        if (aButton && bButton && cButton && dButton && !enterButton) {
             incorrectCodeLed = OFF;
         }
-        if ( enterButton && !incorrectCodeLed && alarmState ) {
-            if ( aButton && bButton && !cButton && !dButton ) {
+        if (enterButton && !incorrectCodeLed && alarmState) {
+            if (aButton && bButton && !cButton && !dButton) {
                 alarmState = OFF;
                 numberOfIncorrectCodes = 0;
             } else {
@@ -149,7 +162,6 @@ void uartTask()
         }
     }
 }
-
 
 void availableCommands()
 {
