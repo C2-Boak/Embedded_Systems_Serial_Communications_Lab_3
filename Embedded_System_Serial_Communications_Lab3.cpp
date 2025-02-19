@@ -3,7 +3,7 @@
 #include "mbed.h"
 #include "arm_book_lib.h"
 
-//=====[Declaration and initialization of public global objects]===============
+
 
 DigitalIn enterButton(BUTTON1);
 DigitalIn gasDetector(D2);
@@ -19,7 +19,7 @@ DigitalOut systemBlockedLed(LED2);
 
 UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 
-//=====[Declaration and initialization of public global variables]=============
+
 
 Ticker alarmstateTicker;
 
@@ -28,7 +28,7 @@ bool gasAlarm = OFF;
 bool tempAlarm = OFF;
 int numberOfIncorrectCodes = 0;
 
-//=====[Declarations (prototypes) of public functions]=========================
+
 
 void inputsInit();
 void outputsInit();
@@ -38,9 +38,9 @@ void alarmDeactivationUpdate();
 
 void uartTask();
 void availableCommands();
-void AlarmstateTrans();  // Declaration of AlarmstateTrans function
+void AlarmstateTrans();
 
-//=====[Main function, the program entry point after power on or reset]========
+
 
 int main()
 {
@@ -56,7 +56,7 @@ int main()
     }
 }
 
-//=====[Implementations of public functions]===================================
+
 
 void AlarmstateTrans()
 {
