@@ -116,7 +116,7 @@ void uartTask()
                 } else {
                     uartUsb.write("Gas detector is not triggered\r\n", 32);
                 }
-
+            case '3':
                 if (overTempDetector) {
                     uartUsb.write("Over temperature detector is triggered\r\n", 41);
                 } else {
@@ -135,5 +135,7 @@ void uartTask()
 void availableCommands()
 {
     uartUsb.write( "Available commands:\r\n", 21 );
-    uartUsb.write( "Press '1' to get the alarm state\r\n\r\n", 36 );
+    uartUsb.write( "Press '1' to get the alarm state\r\n", 36 );
+    uartUsb.write( "Press '2' to get Gas Detector state\r\n\", 40 );
+    uartUsb.write( "Press '3' to get Temperature Detector state\r\n\r\n", 46 );
 }
