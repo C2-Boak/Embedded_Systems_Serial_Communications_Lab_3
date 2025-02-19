@@ -22,6 +22,8 @@ UnbufferedSerial uartUsb(USBTX, USBRX, 115200);
 //=====[Declaration and initialization of public global variables]=============
 
 bool alarmState = OFF;
+bool gasAlarm = OFF;
+bool tempAlarm = OFF;
 int numberOfIncorrectCodes = 0;
 
 //=====[Declarations (prototypes) of public functions]=========================
@@ -73,6 +75,15 @@ void alarmActivationUpdate()
         alarmState = ON;
     }
     alarmLed = alarmState;
+
+    if (gasDetector){
+        gasAlarm = ON;
+    }
+    if (overTempDetector){
+        tempAlarm = ON;
+    }
+
+
 }
 
 void alarmDeactivationUpdate()
@@ -104,23 +115,31 @@ void uartTask()
         switch (receivedChar) {
             case '1':
                 if (alarmState) {
-                    uartUsb.write("The alarm is activated\r\n", 24);
+                    uartUsb.write("\n The alarm is activated!\r\n", 28);
+                    uartUsb.write("\n Make another selection?\r\n", 28);
                 } else {
-                    uartUsb.write("The alarm is not activated\r\n", 28);
+                    uartUsb.write("\n The alarm is not activated!\r\n", 33);
+                    uartUsb.write("\n Make another selection?\r\n", 28);
                 }
                 break;
 
             case '2':
-                if (gasDetector) {
-                    uartUsb.write("Gas detector is triggered\r\n", 26);
+                if (gasAlarm) {
+                    uartUsb.write("\n Gas detector is triggered!\r\n", 31);
+                    uartUsb.write("\n Make another selection?\r\n", 28);
                 } else {
-                    uartUsb.write("Gas detector is not triggered\r\n", 32);
+                    uartUsb.write("\n Gas detector is not triggered!\r\n", 36);
+                    uartUsb.write("\n Make another selection?\r\n", 28);
                 }
+                break;
+
             case '3':
-                if (overTempDetector) {
-                    uartUsb.write("Over temperature detector is triggered\r\n", 41);
+                if (tempAlarm) {
+                    uartUsb.write("\n Over temperature detector is triggered!\r\n", 45);
+                    uartUsb.write("\n Make another selection?\r\n", 28);
                 } else {
-                    uartUsb.write("Over temperature detector is not triggered\r\n", 48);
+                    uartUsb.write("\n Over temperature detector is not triggered!\r\n", 50);
+                    uartUsb.write("\n Make another selection?\r\n", 28);
                 }
                 break;
 
@@ -134,8 +153,8 @@ void uartTask()
 
 void availableCommands()
 {
-    uartUsb.write( "Available commands:\r\n", 21 );
-    uartUsb.write( "Press '1' to get the alarm state\r\n", 36 );
-    uartUsb.write( "Press '2' to get Gas Detector state\r\n\", 40 );
-    uartUsb.write( "Press '3' to get Temperature Detector state\r\n\r\n", 46 );
+    uartUsb.write("\nAvailable commands:\r\n", 24 );
+    uartUsb.write("Press '1' to get the alarm state\r\n", 36 );
+    uartUsb.write("Press '2' to get Gas Detector state\r\n", 40 );
+    uartUsb.write("Press '3' to get Temperature Detector state\r\n\r\n", 46 );
 }
